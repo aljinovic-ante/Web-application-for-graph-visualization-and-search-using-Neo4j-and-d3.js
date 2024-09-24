@@ -2,7 +2,7 @@
 
 This project involves the development of a web application designed for graph visualization and search, utilizing Neo4j and D3.js technologies. The application allows users to create their own graphs and visualize various algorithms through dynamic animations, enhancing the learning and understanding of graph theory concepts.
 
-## Technologies Used:
+# Technologies Used:
 ## Neo4j: 
 A graph database that excels in storing, managing, and querying interconnected data through a graphical model. Utilizing Cypher, a declarative query language, Neo4j simplifies complex data relationships, making it an essential tool across various industries.
 
