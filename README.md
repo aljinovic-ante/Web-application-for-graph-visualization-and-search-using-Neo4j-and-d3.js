@@ -56,6 +56,9 @@ It aims to get to the goal as fast as possible but doesn't guarantee the shortes
 Dijkstra’s algorithm finds the shortest path from a single source node to all other nodes in a weighted graph.
 It systematically explores all possible routes, ensuring that the shortest path is found. Dijkstra’s algorithm is widely used in network routing and mapping applications.
 
+Visulization of the Dijkstra's algorithm:  
+![dij](https://github.com/user-attachments/assets/aaeb1181-5601-49fa-9115-09b41d25580e)
+
 **Bellman-Ford Algorithm:**  
 Bellman-Ford finds the shortest path from a single source node to all other nodes, even in graphs with negative edge weights.
 It iterates through all edges multiple times to guarantee the shortest path and can detect negative weight cycles. Bellman-Ford is slower than Dijkstra's but more versatile, making it useful for graphs with fluctuating costs like in financial models.
@@ -64,6 +67,9 @@ It iterates through all edges multiple times to guarantee the shortest path and 
 Breadth-First Search (BFS) explores all nodes layer by layer, starting from a source node and visiting all its neighbors before moving to the next layer.
 BFS is useful for unweighted graphs and ensures that the shortest path in terms of the number of edges is found. It’s commonly used in scenarios like finding the shortest path in social networks or in solving puzzles.
 
+Visulization of the Breadth-First Search algorithm:  
+![bfs](https://github.com/user-attachments/assets/5420583b-d7e7-413d-ab70-c51626abe82d)
+
 **Depth-First Search Algorithm:**  
 Depth-First Search (DFS) explores as far down a branch as possible before backtracking and trying alternative paths.
 It’s useful for searching deeper into a graph, solving mazes, and detecting cycles. DFS is not guaranteed to find the shortest path but is efficient for exploring large graphs where depth matters.
@@ -71,6 +77,9 @@ It’s useful for searching deeper into a graph, solving mazes, and detecting cy
 **Kruskal's Algorithm:**  
 Kruskal's algorithm finds a Minimum Spanning Tree (MST) for a graph by selecting edges in increasing order of weight and adding them as long as they don’t form a cycle.
 It is used to connect all nodes in a graph with the least total edge weight, making it ideal for designing efficient networks like telephone or electrical grids.
+
+Visulization of the Kruskal's algorithm:  
+![krus](https://github.com/user-attachments/assets/7aca545b-d9a7-4dc7-b66b-49223e893ef7)
 
 **Prim's Algorithm:**  
 Prim's algorithm builds a Minimum Spanning Tree (MST) by starting from any node and progressively adding the smallest edge that connects a new vertex to the growing tree.
