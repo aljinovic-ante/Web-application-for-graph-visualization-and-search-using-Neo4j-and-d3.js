@@ -19,7 +19,7 @@ A styling language used to control the visual presentation of web pages, ensurin
 The programming language that adds interactivity and dynamic behavior to web pages. JavaScript integrates seamlessly with HTML and CSS, enabling real-time content and style updates based on user actions.
 
 # Features:
-**Graph Info**
+**Graph Info**  
 Display of key information about the current graph, such as:
 - Number of vertices and edges
 - Degree of each vertex
@@ -31,58 +31,58 @@ Display of key information about the current graph, such as:
 **Templates**  
 Templates menu with predefined graph structures. Choose from several templates for a quick start, then customize them as needed. This feature is especially useful if you want to avoid creating graphs from scratch. When you select a template, the current graph is replaced by the new structure.
 
-**Import/Export Graph**
+**Import/Export Graph**  
 The Import/Export Graph button allows you to import or export graphs in the Cypher file format.
 
-**Graph Visualization and Interaction**
+**Graph Visualization and Interaction**  
 Visualization of the graph and interactivity with its elements.
 Application UI and example of a graph:
 ![1](https://github.com/user-attachments/assets/ff01f5e7-a223-4caf-a704-f732a49f81e8)
 
-**Visualization of the algorithms**
+***Visualization of the algorithms***  
 Visualize execution of one of these twelve algorithms:
 
-**A STAR algorithm:**
+**A STAR algorithm:**  
 A* finds the shortest path between two nodes by combining the benefits of Dijkstra's algorithm (which guarantees the shortest path) and Greedy Best-First Search (which uses heuristics to guide the search).
 It uses both the actual distance from the start node to the current node and an estimate (heuristic) of the distance from the current node to the goal, making it efficient for pathfinding in scenarios like game development and robotics.
 
-**Greedy Best-First Search Algorithm:**
+**Greedy Best-First Search Algorithm:**  
 Greedy Best-First Search (BFS) explores the node that seems closest to the goal (based on a heuristic) without considering the total path length.
 It aims to get to the goal as fast as possible but doesn't guarantee the shortest path. It is used in scenarios where speed is more important than optimality, such as simple AI pathfinding.
 
-**Dijkstra's Algorithm:**
+**Dijkstra's Algorithm:**  
 Dijkstra’s algorithm finds the shortest path from a single source node to all other nodes in a weighted graph.
 It systematically explores all possible routes, ensuring that the shortest path is found. Dijkstra’s algorithm is widely used in network routing and mapping applications.
 
-**Bellman-Ford Algorithm:**
+**Bellman-Ford Algorithm:**  
 Bellman-Ford finds the shortest path from a single source node to all other nodes, even in graphs with negative edge weights.
 It iterates through all edges multiple times to guarantee the shortest path and can detect negative weight cycles. Bellman-Ford is slower than Dijkstra's but more versatile, making it useful for graphs with fluctuating costs like in financial models.
 
-**Breadth-First Search Algorithm:**
+**Breadth-First Search Algorithm:**  
 Breadth-First Search (BFS) explores all nodes layer by layer, starting from a source node and visiting all its neighbors before moving to the next layer.
 BFS is useful for unweighted graphs and ensures that the shortest path in terms of the number of edges is found. It’s commonly used in scenarios like finding the shortest path in social networks or in solving puzzles.
 
-**Depth-First Search Algorithm:**
+**Depth-First Search Algorithm:**  
 Depth-First Search (DFS) explores as far down a branch as possible before backtracking and trying alternative paths.
 It’s useful for searching deeper into a graph, solving mazes, and detecting cycles. DFS is not guaranteed to find the shortest path but is efficient for exploring large graphs where depth matters.
 
-**Kruskal's Algorithm:**
+**Kruskal's Algorithm:**  
 Kruskal's algorithm finds a Minimum Spanning Tree (MST) for a graph by selecting edges in increasing order of weight and adding them as long as they don’t form a cycle.
 It is used to connect all nodes in a graph with the least total edge weight, making it ideal for designing efficient networks like telephone or electrical grids.
 
-**Prim's Algorithm:**
+**Prim's Algorithm:**  
 Prim's algorithm builds a Minimum Spanning Tree (MST) by starting from any node and progressively adding the smallest edge that connects a new vertex to the growing tree.
 It is effective for constructing low-cost networks or pipelines where every node needs to be connected with the minimum total cost.
 
-**Fleury's Algorithm:**
+**Fleury's Algorithm:**  
 Fleury’s algorithm finds an Eulerian path or circuit in a graph, which visits every edge exactly once.
 It carefully avoids removing bridges (edges that disconnect parts of the graph) until necessary. Fleury's algorithm is used in routing problems where every street (edge) needs to be traversed once, such as mail delivery or garbage collection.
 
-**Hierholzer's Algorithm:**
+**Hierholzer's Algorithm:**  
 Hierholzer's algorithm is used to find an Eulerian circuit by constructing smaller cycles and progressively connecting them until a full circuit is formed.
 It is highly efficient for solving Eulerian circuit problems when the graph contains an Eulerian cycle, as used in problems like network flow or circuit design.
 
-**Travelling Salesman Problem - Nearest Neighbor Algorithm:**
+**Travelling Salesman Problem - Nearest Neighbor Algorithm:**  
 The Nearest Neighbor algorithm for the Travelling Salesman Problem (TSP) finds an approximate solution by starting at a city, visiting the nearest unvisited city, and repeating until all cities are visited.
 Though fast, this method often fails to find the optimal path, making it best for smaller datasets or cases where an approximate solution is acceptable.
 
