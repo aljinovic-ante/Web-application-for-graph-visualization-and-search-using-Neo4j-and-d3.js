@@ -1,0 +1,701 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+* {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+body,html {
+    overflow: hidden; 
+    height: 100%;
+    margin: 0;
+}
+.container {
+    height: 100%; 
+    display: flex; 
+    flex-direction: column; 
+
+}
+.query {
+    min-height: 70px;
+    background-color: #05327C;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+.modal-button, #queryContainer {
+    margin: 0 10px; 
+}
+.graph-container {
+    height: calc(100% - 330px);
+    flex: 4;
+    display: flex;
+    justify-content: center;
+    border: 4px solid black; 
+}
+#graph {
+    width: 100%; 
+    height: 100%; 
+}
+#contextMenu, #linkMenu, #backgroundMenu {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    background: #f9f9f9; 
+    border: 1px solid #ccc;
+    padding: 10px; 
+    width: 200px; 
+    text-align: center; 
+    border-radius: 5px; 
+}
+
+.contextMenuListOption,.linkMenuListOption,.backgroundMenuListOption{
+    padding-bottom: 5px;
+}
+
+.contextMenuListOption:hover{
+    background-color: #175ab3; 
+    color: white;
+    cursor: pointer;
+}
+.linkMenuListOption:hover {
+    background-color: #175ab3; 
+    color: white;
+    cursor: pointer;
+}
+.backgroundMenuListOption:hover {
+    background-color: #175ab3; 
+    color: white;
+    cursor: pointer;
+}
+
+#nodeNameDisplay, #linkNameDisplay {
+    background-color: #05327C;
+    color: white; 
+    padding: 5px 5px; 
+    margin-bottom: 10px; 
+    border-radius: 3px;
+}
+
+.buttons{
+    font-size: 30px;
+    background-color: #175ab3;
+    color:white;
+}
+
+.modal-overlay {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center; 
+    border: 3px solid  #05327C;
+}
+
+.modal-actions {
+    text-align: center; 
+    margin-top: 30px;
+    display: flex;
+    justify-content: center; 
+    gap: 20px; 
+}
+
+.modal-button {
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 15px 25px;
+    cursor: pointer;
+    outline: none;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+.modal-button-incidenceMatrix{
+    background-color: rgb(0, 119, 255);
+    color:white;
+    border: none;
+    border-radius: 5px;
+    padding: 15px 25px;
+    cursor: pointer;
+    outline: none;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+.cancel-button,#changeDirNo,#confirmYes,#confirmNoAddTemplate,#nodeNameCancel,#deleteNodeYes,#renameNodeCancel,#createRelationshipCancel,#confirmDeleteAll,.modal-button-close {
+    background-color: #ff0019; 
+}
+.cancel-button:hover,#changeDirNo:hover,#confirmYes:hover,#confirmNoAddTemplate:hover,#nodeNameCancel:hover,#deleteNodeYes:hover,#renameNodeCancel:hover,#createRelationshipCancel:hover,#confirmDeleteAll:hover,.modal-button-close:hover {
+    background-color: #a50415; 
+}
+.confirm-button,#changeDirYes,#confirmNo,#confirmYesAddTemplate,#nodeNameConfirm,#deleteNodeNo,#renameNodeConfirm,#createRelationshipConfirm,#cancelDeleteAll {
+    background-color: #007bff; 
+}
+.confirm-button:hover,#changeDirYes:hover,#confirmNo:hover,#confirmYesAddTemplate:hover,#nodeNameConfirm:hover,#deleteNodeNo:hover,#renameNodeConfirm:hover,#createRelationshipConfirm:hover,.modal-button-incidenceMatrix:hover,#cancelDeleteAll:hover {
+    background-color: #0056b3; 
+}
+.navbar-button {
+    background-color: #fff; 
+    color: #000; 
+    border: 2px solid black;
+    font-weight: bold; 
+}
+
+.navbar-button:hover {
+    /* background-color: #d1e7fd;  */
+    background-color: #dbeaf8; 
+    color: #05327C;
+    transition: background-color 0.3s, color 0.3s; 
+    cursor: pointer;
+}
+.templ-button {
+    background-color: #fff; 
+    color: #000; 
+    border: 2px solid black;
+    font-weight: bold; 
+}
+.templ-button:hover {
+    cursor: pointer;
+}
+.yellow-button{
+    background-color: rgb(19, 167, 0);
+}
+.yellow-button:hover{
+    background-color: rgb(0, 104, 47);
+}
+.link-weight-input,.node-name-input {
+    display: block;
+    margin: 20px auto;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 80%;
+}
+.modal-input {
+    display: inline;
+    margin: 20px auto;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 40%;
+}
+.modal-input2 {
+    display: inline;
+    margin: 20px auto;
+    padding: 10px;
+    font-size: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 60%;
+}
+#targetNodeDropdown {
+    overflow-y: auto; 
+    max-height: 150px; 
+}
+#inputConfirm {
+    background-color: #007bff;
+}
+#inputConfirm:hover {
+    background-color: #0056b3; 
+}
+#inputCancel{
+    background-color: #ff0019; 
+}
+#inputCancel:hover {
+    background-color: #a50415; 
+}
+#customInputMessage,#customNodeInputMessage,#customConfirmMessage,#customConfirmMessageAddTemplate,#deleteNodeMessage,#renameNodeMessage,#addRelationshipMessage,#selectedNodeMessage {
+    font-size: 25px;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+#graphInfoModalMessage {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    align-items: center; 
+    justify-content: center;
+    padding-left: 15px;
+    color:#000000;
+}
+
+.warning-message{
+    display: none; 
+    color: red; 
+    font-weight: bold;
+}
+
+.modal-content-graph-details {
+    background-color: white;
+    border-radius: 10px;
+    width: 700px;
+    height: 700px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center; 
+    font-size: 20px;
+}
+.modal-content-graph-details-incidentMatrix {
+    background-color: white;
+    border-radius: 8px;
+    width: 1000px;
+    height: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center; 
+    font-size: 20px;
+    max-width: 100%; 
+    overflow-x: auto; 
+    overflow-y: auto; 
+    white-space: nowrap; 
+}
+
+.modal-content-graph-details-eulergraph {
+    background-color: white;
+    border-radius: 8px;
+    width: 1000px;
+    height: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center; 
+    font-size: 20px;
+    max-width: 100%; 
+}
+
+.modal-content-graph-details-incidentMatrix table {
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: separate;
+}
+
+.modal-content-graph-details-incidentMatrix th, .modal-content-graph-details-incidentMatrix td {
+    padding: 5px;
+    border-bottom: none;
+    border-right: none; 
+    min-width: 50px;
+}
+
+.modal-content-graph-details-incidentMatrix thead th {
+    background-color: #007bff;
+    color: white;
+    padding: 5px;
+}
+
+.modal-content-graph-details-incidentMatrix tbody td:first-child {
+    background-color:#007bff;
+    color: white;
+    padding: 5px;
+}
+
+.close-modal-button {
+    position: relative; 
+    top: 10px; 
+    right: 10px; 
+    border: none;
+    background-color: red;
+    color: white;
+    font-size: 24px; 
+    cursor: pointer;
+    border-radius: 20%;
+    width: 30px;
+    height: 30px; 
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    border: 2px solid black;
+}
+
+.close-modal-button:hover {
+    opacity: 1;
+    background-color: darkred;
+}
+
+.button-dropdown button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    box-sizing: border-box;
+}
+
+.dropdown-content button {
+    display: block;
+    width: calc(100% - 20px); 
+    padding: 10px;
+    text-align: left;
+}
+
+.confirmAlgorithm-modal-overlay {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-start; 
+    justify-content: center;
+    padding-top: 50px; 
+}
+
+.confirmAlgorithm-modal-content-addLink {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    width: 600px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center; 
+    animation: slideDown 0.5s ease-out; 
+    border: 3px solid  #05327C;
+}
+
+.modal-content-addLink {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    width: 600px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: absolute;
+    border: 3px solid  #05327C;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.confirmAlgorithm-modal-actions {
+    text-align: center; 
+    margin-top: 30px;
+    display: flex;
+    justify-content: center; 
+    gap: 20px; 
+}
+
+.confirmAlgorithm-modal-button {
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 15px 25px;
+    cursor: pointer;
+    outline: none;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+/* =>> toggle switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin: 0 10px;
+}
+.toggle-switch input {
+    display: none;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #064c9c;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #FFFFFF;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: hsl(318, 74%, 38%);
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+    background-color: #FFFFFF;
+}
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+}
+.toggle-label {
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.4s;
+}
+.toggle-label-left {
+    color: #064c9c;
+}
+.toggle-label-right {
+    color: black;
+}
+input:checked + .slider + .toggle-label-right {
+    color: hsl(318, 74%, 38%);
+}
+input:not(:checked) + .slider + .toggle-label-left {
+    color: #064c9c;
+}
+input:checked + .slider ~ .toggle-label-left {
+    color: black;
+}
+input:not(:checked) + .slider ~ .toggle-label-right {
+    color: black;
+}
+.modal-content-table {
+    background-color: white;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: absolute;
+    max-width: 100%;
+    overflow-x: auto; 
+    overflow-y: auto;
+    border: 3px solid  #05327C;
+    max-width: 1500px;
+}
+.dynamic-width {
+    display: inline-block;
+    max-width: 75%;
+}
+
+.graph-info-modal-data table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse; 
+}
+
+.graph-info-modal-data th, .graph-info-modal-data td {
+    padding: 8px;
+    text-align: center;
+    border: 3px solid black; 
+}
+
+.graph-info-modal-data th {
+    background-color: #007bff;
+    color: white;
+}
+
+.graph-info-modal-data th:first-child {
+    background-color: yellow;
+    color: black;
+}
+
+.graph-info-modal-data td:first-child {
+    background-color: #007bff;
+    color: white;
+}
+.template-button {
+    background: #ffffff;
+    border: 1px solid #060e31;
+    font-size: 20px;
+    color: #000;
+    cursor: pointer;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+    width: 150px;
+}
+.template-button:hover {
+    background-color: #b0d7ff;
+}
+.template-button.selected {
+    background-color: #0056b3;
+    border-color: #004494;
+    color: #fff;
+    transform: scale(1.1);
+}
+.vertical-divider {
+    border-left: 2px solid #000;
+    height: 60px;
+    display: inline-block;
+    margin: 0 20px;
+}
+.template-button-group {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.node-link-group {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.node-link-group button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+.node-link-group button.selected {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+}
+.file-input-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+input[type="file"] {
+    font-size: 20px;
+}
+
+.algOngoin-overlay {
+    position: fixed;
+    top: 18px;
+    right: 50px;
+    width: 20%; 
+    height: 3%; 
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    z-index: 1000; 
+}
+
+.algOngoing-content {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    padding: 10px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center; 
+    justify-content: space-between;
+    border: 3px solid gold; 
+}
+
+.algOngoing-message {
+    font-size: 20px; 
+    text-align: left;
+    margin: 0; 
+    flex-grow: 1; 
+    margin-left: 25px; 
+}
+
+.algOngoingStopButton {
+    padding: 12px 30px; 
+    font-size: 15px; 
+    color: white;
+    background-color: red;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 25px; 
+    margin-right: 25px; 
+}
+
+.algOngoingStopButton:hover {
+    background-color: darkred;
+}
+
+.loader {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #3498db;
+    animation: spin 0.7s linear infinite;
+    margin-right: 25px; 
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+.algDesc-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.algDesc-modal-content-table {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    max-height: 80%;
+    overflow-y: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.algDesc-dynamic-width {
+    width: 80%;
+    max-width: 800px;
+}
+
+.algDesc-modal-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.algDesc-navbar-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.algDesc-cancel-button {
+    background-color: #DC3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.algDesc-graph-info-modal-data {
+    max-height: 400px;
+    overflow-y: auto;
+}

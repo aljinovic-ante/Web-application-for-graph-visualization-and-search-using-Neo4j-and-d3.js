@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphAlgorithm</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="query">
+            <!-- <input placeholder="Cypher query" id="queryContainer"> -->
+            <button id="homeButton" onclick="home()" class="modal-button navbar-button">Home</button>
+            <text style="font-size:20px; color: white; padding-left: 10px; padding-right: 10px;">|</text>
+            <button onclick="pullGraphInfo()" class="modal-button navbar-button">Graph Info</button>
+            <button id="addTemplateButton" class="modal-button navbar-button">Templates</button>
+            <button id="openAlgorithmsWindow" class="modal-button navbar-button">Algorithms</button>
+            <button onclick="showModal()" id="deleteAllButton" class="modal-button navbar-button">Delete All</button>
+            <text style="font-size:20px; color: white; padding-left: 10px; padding-right: 10px;">|</text>
+            <button id="openRulesMenu" class="modal-button navbar-button">Rules</button>
+
+            <button onclick="pullImpExp()" id="importExportButton" class="modal-button navbar-button">Import/Export Graph</button>
+            <button onclick="sendToggleState()" id="toggleDir" class="modal-button navbar-button">Toggle Edge Direction</button>
+            <text id="algDescSeparator" style="font-size:20px; color: white; padding-left: 10px; padding-right: 10px; display:none;">|</text>
+            <button id="algDescPrintResult" class="modal-button navbar-button" style="display:none;">Algorithm result</button>
+
+            <!-- start-template -->
+            <div id="addTemplateWindow" class="modal-overlay" style="display: none;">
+                <div class="modal-content-addLink">
+                    <p id="rulesMessage" style="font-size: 30px;"><strong>Add Template</strong></p>
+                    <p id="rulesMessage" style="font-size: 20px;">Pick one of these templates:</p>
+                    <hr><br>
+                    <div class="template-button-group">
+                        <button class="template-button" onclick="selectTemplate('5', this)">
+                            <div>5 Nodes</div>
+                            <div>7 Links</div>
+                        </button>
+                        <div class="vertical-divider"></div>
+                        <button class="template-button" onclick="selectTemplate('10', this)">
+                            <div>10 Nodes</div>
+                            <div>14 Links</div>
+                        </button>
+                        <div class="vertical-divider"></div>
+                        <button class="template-button" onclick="selectTemplate('15', this)">
+                            <div>15 Nodes</div>
+                            <div>21 Links</div>
+                        </button>
+                    </div>
+                    <br><br>
+                    <div class="modal-actions">
+                        <button onclick="openConfirmModal()" class="modal-button confirm-button">Add</button>
+                        <button id="close-button-add-template" class="modal-button cancel-button">Cancel</button>
+                    </div>
+                    <div id="templateConfirmModal" class="modal-overlay" style="display: none;">
+                        <div class="modal-content">
+                            <p id="customConfirmMessageAddTemplate">Adding this template will delete your current graph. Do you want to continue?</p>
+                            <div class="modal-actions">
+                                <button id="confirmYesAddTemplate" class="modal-button" onclick="addTemplate()">Yes</button>
+                                <button id="confirmNoAddTemplate" class="modal-button" onclick="closeConfirmModal()">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end-template -->
+            <!-- start-algorithms-menu -->
+            <div id="chooseAlgorithmModal" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="chooseAlgorithmMessage" style="font-size: 30px;"><strong>Algorithms</strong></p>
+                    <hr><br>
+                    <p style="font-size: 25px;">Pick one of these algorithms:</p>
+                    <select id="algorithmDropdown" class="modal-input2">
+                        <option value="">Select an algorithm</option>
+                        <option value="1" class="algorithm-option">A* Algorithm</option>
+                        <option value="2" class="algorithm-option">Greedy BFS Algorithm</option>
+                        <option value="3" class="algorithm-option">Dijkstra's Algorithm</option>
+                        <option value="4" class="algorithm-option">Breadth First Search Algorithm</option>
+                        <option value="5" class="algorithm-option">Depth First Search Algorithm</option>
+                        <option value="6" class="algorithm-option">Kruskal's Algorithm</option>
+                        <option value="7" class="algorithm-option">Prim's Algorithm</option>
+                        <option value="8" class="algorithm-option">Fleury's Algorithm</option>
+                        <option value="9" class="algorithm-option">Hierholzer's Algorithm</option>
+                        <option value="10" class="algorithm-option">Bellman-Ford Algorithm</option>
+                        <option value="11" class="algorithm-option">Travelling Salesman Problem</option>
+                    </select>
+                    <div id="warningDiv" style="border: solid 2px red; padding: 20px;">
+                        <div id="algWarning" class="disabled-algorithms-list" style="display: none; color: red; font-size: 20px; text-align: center; font-weight: bold;"></div>
+                        <div id="disabledAlgorithmsList" class="disabled-algorithms-list" style="display: none; color: red; font-size: 14px; text-align: center; font-weight: bold;"></div>
+                    </div>
+                    <div class="modal-actions">
+                        <button id="chooseAlgorithmCancel" class="modal-button cancel-button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+                                    
+            <!-- end-algorithms-menu -->
+
+            <!-- start-rules-->
+            <div id="rulesMenu" class="confirmAlgorithm-modal-overlay" style="display:none;">
+                <div id="dragModal" class="confirmAlgorithm-modal-content-addLink">
+                    <p id="rulesMessage" style="font-size: 30px;"><strong>Application Rules:</strong></p>
+                    <hr><br>
+                    <ol id="rulesList" style="font-size: 20px; list-style-type: upper-roman;">
+                        <li>Multiple links between the same nodes are forbidden.</li>
+                        <li>Loops (links that connect node to itself) are forbidden.</li>
+                        <li>Unique node names are required.</li>
+                    </ol>
+                    <div class="modal-actions">
+                        <button id="closeRulesMenu" class="modal-button cancel-button">Close</button>
+                    </div>
+                </div>
+            </div>
+            <!-- end-rules -->
+
+            <!-- start-Astar-menu -->
+            <div id="chooseNodesAstar" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="AstarHeadline" style="font-size: 35px; color:black"><strong>A* algorithm</strong></p><hr>
+                    <p id="chooseNodesAstarMessageExpl" style="font-size: 20px;">Finding and visualizing the shortest path between 2 nodes in <strong>undirected graph</strong> using the A* algorithm</p>
+                    <p id="chooseNodesAstarMessage" style="font-size: 20px;"><strong>Choose the start and end node for A* algorithm:</strong></p>
+                    <select id="startNodeDropdown" class="modal-input"></select>
+                    <select id="endNodeDropdown" class="modal-input"></select>
+                    <p id="relationshipWarningASTAR" class="warning-message" style="display: none;"></p>
+                    <p id="algorithmWarning" class="warning-message" style="display: none;"></p>
+                    <div class="modal-actions">
+                        <button id="chooseNodesAstarConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesAstarCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesAstarExplainAlg" class="modal-button yellow-button">What is A* Algorithm?</button>
+                    </div>
+                </div>
+            </div>         
+            <div id="whatIsAstar" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsAstarMessageExpl" style="font-size: 20px;">
+                        <strong>What is the A* Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        The A* (A-star) algorithm for <strong>undirected graph</strong> is a popular method for finding the shortest path between two points. It combines the benefits of Dijkstra's Algorithm and Best-First Search to efficiently navigate through graphs and maps.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> A* helps in finding the shortest route from a starting point to a destination.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It uses a special formula that considers both the distance you've already traveled and an estimate of the remaining distance to your destination.</li>
+                            <li><strong>Step 1:</strong> Begin at your starting point and look at all the places you can go next.</li>
+                            <li><strong>Step 2:</strong> For each option, calculate the travel cost, which includes the distance covered so far plus an estimated distance to the goal (physical distance in graph).</li>
+                            <li><strong>Step 3:</strong> Choose the option with the lowest cost and move there.</li>
+                            <li><strong>Step 4:</strong> Repeat this process until you reach your destination.</li>
+                            <li>This way, A* keeps you on track toward the shortest path by balancing the distance traveled and the distance left to cover.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsAstarClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                                
+            <!-- end-Astar-menu -->
+            <!-- start-GBFS-menu -->
+            <div id="chooseNodesGBFS" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="GBFSHeadline" style="font-size: 35px; color:black"><strong>Greedy Best-First Search algorithm</strong></p><hr>
+                    <p id="chooseNodesGBFSMessageExpl" style="font-size: 20px;">Finding and visualizing the shortest path between 2 nodes in <strong>undirected graph</strong> using the Greedy BFS (Best-First Search) algorithm</p>
+                    <p id="chooseNodesGBFSMessage" style="font-size: 20px;"><strong>Choose the start and end node for Greedy BFS algorithm:</strong></p>
+                    <select id="startNodeDropdownGBFS" class="modal-input"></select>
+                    <select id="endNodeDropdownGBFS" class="modal-input"></select>
+                    <p id="relationshipWarningGBFS" class="warning-message" style="display: none;"></p>
+                    <p id="algorithmWarningGBFS" class="warning-message" style="display: none;"></p>
+                    <div class="modal-actions">
+                        <button id="chooseNodesGBFSConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesGBFSCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesGBFSExplainAlg" class="modal-button yellow-button">What is Greedy BFS Algorithm?</button>
+                    </div>
+                </div>
+            </div>
+            <div id="whatIsGBFS" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsGBFSMessageExpl" style="font-size: 20px;">
+                        <strong>What is Greedy Best-First Search (GBFS) Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        The Greedy Best-First Search (GBFS) algorithm for <strong>undirected graph</strong> is a pathfinding algorithm that focuses on exploring the most promising path based on a heuristic, which estimates the phyiscal distance to the goal.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> GBFS searches for a path from a start node to an end node by always expanding the node that appears to be closest to the goal.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It uses a heuristic to prioritize which nodes to explore next, based on their estimated distance to the goal.</li>
+                            <li><strong>Step 1:</strong> Start from the initial point and look at all the possible points you can move to next.</li>
+                            <li><strong>Step 2:</strong> Calculate the estimated physical distance (heuristic) from each point to the goal.</li>
+                            <li><strong>Step 3:</strong> Choose the point with the lowest estimated distance and move to that point.</li>
+                            <li><strong>Step 4:</strong> Repeat the process from the new point until you reach the goal or run out of points to explore.</li>
+                            <li>This way, GBFS focuses on exploring paths that seem to lead directly to the goal, although it doesn't always guarantee the shortest path.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsGBFSClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                        
+            <!-- end-GBFS-menu -->
+            <!-- start-dijkstra-menu -->
+            <div id="chooseNodesDijkstra" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="chooseNodesDijkstraMessageExpl2" style="font-size: 35px; color:black"><strong>Dijkstra's algorithm</strong></p><hr>
+                    <p id="chooseNodesDijkstraMessageExpl" style="font-size: 20px;">Finding and visualizing the shortest path between 2 nodes in <strong>undirected graph</strong> using the Dijkstra's algorithm</p>
+                    <hr>
+                    <div class="toggle-container">
+                        <span class="toggle-label toggle-label-left"><strong>From Start to End Node</strong></span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dijkstraToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label toggle-label-right"><strong>From Start to All Nodes</strong></span>
+                    </div>
+                    <hr>
+                    <p id="chooseNodesDijkstraMessage" style="font-size: 20px;"><strong>Choose the start and end node for Dijkstra's algorithm:</strong></p>
+                    <select id="startNodeDropdownDijkstra" class="modal-input"></select>
+                    <select id="endNodeDropdownDijkstra" class="modal-input"></select>
+                    <p id="relationshipWarningDijsktra" class="warning-message" style="display: none;"></p>
+                    <p id="algorithmWarningDijsktra" class="warning-message" style="display: none;"></p>
+                    <div class="modal-actions">
+                        <button id="chooseNodesDijkstraConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesDijkstraCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesDijkstraExplainAlg" class="modal-button yellow-button">What is Dijkstra's Algorithm?</button>
+                    </div>
+                </div>
+            </div>      
+            <div id="whatIsDijkstra" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsDijkstraMessageExpl" style="font-size: 20px;">
+                        <strong>What is Dijkstra's Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        Dijkstra's algorithm for <strong>undirected graph</strong> is a famous algorithm used for finding the shortest paths between nodes in a graph. It works by exploring all possible paths and choosing the one with the lowest total distance.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> Dijkstra's algorithm searches for the shortest path from a start node to an end node, ensuring the least total distance traveled.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It systematically explores all possible paths from the start node to other nodes in the graph.</li>
+                            <li><strong>Step 1:</strong> Start from the initial point and set the distance to 0. All other nodes are set to infinity distance.</li>
+                            <li><strong>Step 2:</strong> Select the node with the smallest known distance and explore all its neighboring nodes.</li>
+                            <li><strong>Step 3:</strong> For each neighboring node, calculate the total distance from the start node. If this distance is smaller than the currently known distance, update the shortest distance.</li>
+                            <li><strong>Step 4:</strong> Repeat the process with the next node with the smallest known distance.</li>
+                            <li>This way, Dijkstra's algorithm ensures that it finds the shortest possible path from the start node to the end node by always choosing the path with the least distance.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsDijkstraClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                                      
+            <!-- end-dijkstra-menu -->
+            <!-- start-bfs-menu -->
+            <div id="chooseNodesBFS" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="BFSHeadline" style="font-size: 35px; color:black"><strong>Breadth First Search algorithm</strong></p><hr>
+                    <p id="chooseNodesBFSMessageExpl" style="font-size: 20px;">Finding and visualizing the path between 2 nodes in <strong>undirected graph</strong> using the BFS (Breadth First Search) algorithm</p>
+                    <p id="chooseNodesBFSMessage" style="font-size: 20px;"><strong>Choose the start and end node for BFS algorithm:</strong></p>
+                    <select id="startNodeDropdownBFS" class="modal-input"></select>
+                    <select id="endNodeDropdownBFS" class="modal-input"></select>
+                    <p id="relationshipWarningbfs" class="warning-message" style="display: none;"></p>
+                    <div class="modal-actions">
+                        <button id="chooseNodesBFSConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesBFSCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesBFSExplainAlg" class="modal-button yellow-button">What is BFS Algorithm?</button>
+                    </div>
+                </div>
+            </div>
+            <div id="whatIsBFS" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsBFSMessageExpl" style="font-size: 20px;">
+                        <strong>What is Breadth-First Search (BFS) Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        The Breadth-First Search (BFS) algorithm for <strong>undirected graph</strong> is a simple and systematic way of exploring nodes in a graph, layer by layer, starting from a given start node.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> BFS searches for a path from a start node to an end node by exploring all nodes at the present depth level before moving on to nodes at the next depth level.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It uses a queue to keep track of the nodes to be explored next.</li>
+                            <li><strong>Step 1:</strong> Start from the initial point and add it to the queue.</li>
+                            <li><strong>Step 2:</strong> Remove the first node from the queue and explore all its neighboring nodes.</li>
+                            <li><strong>Step 3:</strong> For each neighboring node, if it has not been visited yet, mark it as visited and add it to the queue.</li>
+                            <li><strong>Step 4:</strong> Repeat the process until the end node is found or the queue is empty.</li>
+                            <li>This way, BFS ensures that it explores all possible paths from the start node in a systematic manner, layer by layer, until it finds the shortest path to the end node.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsBFSClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                        
+            <!-- end-bfs-menu -->
+            <!-- start-dfs-menu -->
+            <div id="chooseNodesDFS" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="DFSHeadline" style="font-size: 35px; color:black"><strong>Depth First Search algorithm</strong></p><hr>
+                    <p id="chooseNodesDFSessageExpl" style="font-size: 20px;">Finding and visualizing the path between 2 nodes in <strong>undirected graph</strong> using the DFS (Depth First Search) algorithm</p>
+                    <p id="chooseNodesDFSMessage" style="font-size: 20px;"><strong>Choose the start and end node for DFS algorithm:</strong></p>
+                    <select id="startNodeDropdownDFS" class="modal-input"></select>
+                    <select id="endNodeDropdownDFS" class="modal-input"></select>
+                    <p id="relationshipWarningDFS" class="warning-message" style="display: none;"></p>
+                    <div class="modal-actions">
+                        <button id="chooseNodesDFSConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesDFSCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesDFSExplainAlg" class="modal-button yellow-button">What is DFS Algorithm?</button>
+                    </div>
+                </div>
+            </div>
+            <div id="whatIsDFS" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsDFSMessageExpl" style="font-size: 20px;">
+                        <strong>What is Depth-First Search (DFS) Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        The Depth-First Search (DFS) algorithm for <strong>undirected graph</strong> is a method for exploring a graph by starting at the root node and exploring as far as possible along each branch before backtracking.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> DFS searches for a path from a start node to an end node by exploring as deep as possible down one path before backtracking and trying another path.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It uses a stack to keep track of the nodes to be explored next.</li>
+                            <li><strong>Step 1:</strong> Start from the initial point and add it to the stack.</li>
+                            <li><strong>Step 2:</strong> Remove the last node from the stack and explore all its neighboring nodes.</li>
+                            <li><strong>Step 3:</strong> For each neighboring node, if it has not been visited yet, mark it as visited and add it to the stack.</li>
+                            <li><strong>Step 4:</strong> Repeat the process until the end node is found or the stack is empty.</li>
+                            <li>This way, DFS explores one path as deep as possible before backtracking and exploring other paths, ensuring that all nodes are visited.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsDFSClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                        
+            <!-- end-dfs-menu -->
+            <!-- start-kruskal-menu -->
+            <div id="chooseNodesKruskal" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="chooseNodesKruskalessageExpl" style="font-size: 35px; color:black"><strong>Kruskal's algorithm</strong></p><hr>
+                    <p id="chooseNodesKruskalMessage" style="font-size: 20px;">Use Kruskal's algorithm to find the Minimum Spanning Tree (MST) in a graph</p><br>
+                    <div class="modal-actions">
+                        <button id="chooseNodesKruskalConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesKruskalCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesKruskalExplainAlg" class="modal-button yellow-button">What is Kruskal's Algorithm?</button>
+                    </div>
+                </div>
+            </div>
+            <div id="whatIsKruskal" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsKruskalMessageExpl" style="font-size: 20px;">
+                        <strong>What is Kruskal's Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        Kruskal's algorithm is used to find the Minimum Spanning Tree (MST) in a graph, which connects all nodes with the least total link weight.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> Kruskal's algorithm finds the subset of links that form a tree including every node, where the total weight of all the links in the tree is minimized.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It sorts all the links in the graph by their weight in ascending order.</li>
+                            <li><strong>Step 1:</strong> Initialize an empty set to keep track of the links in the MST.</li>
+                            <li><strong>Step 2:</strong> Iterate through the sorted links and add each link to the MST if it doesn't form a cycle with the links already in the MST.</li>
+                            <li><strong>Step 3:</strong> Use a data structure called Union-Find to efficiently manage the connected components of the graph.</li>
+                            <li>This way, Kruskal's algorithm ensures that the resulting tree has the minimum possible total link weight while connecting all the nodes in the graph.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsKruskalClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                        
+            <!-- end-kruskal-menu -->
+            <!-- start-prim-menu -->
+            <div id="chooseNodesPrim" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="chooseNodesPrimessageExpl" style="font-size: 35px; color:black"><strong>Prim's algorithm</strong></p><hr>
+                    <p id="chooseNodesPrimMessage" style="font-size: 20px;">Use Prim's algorithm to find the Minimum Spanning Tree (MST) in a graph</p><br>
+                    <div class="modal-actions">
+                        <button id="chooseNodesPrimConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesPrimCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesPrimExplainAlg" class="modal-button yellow-button">What is Prim's Algorithm?</button>
+                    </div>
+                </div>
+            </div>
+            <div id="whatIsPrim" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsPrimMessageExpl" style="font-size: 20px;">
+                        <strong>What is Prim's Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        Prim's algorithm is used to find the Minimum Spanning Tree (MST) in a graph, which connects all nodes with the least total link weight.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> Prim's algorithm finds a subset of links that form a tree including every node, where the total weight of all the links in the tree is minimized.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It starts with an arbitrary node and grows the MST one link at a time.</li>
+                            <li><strong>Step 1:</strong> Initialize an empty set to keep track of the links in the MST and add the starting node to the set of visited nodes.</li>
+                            <li><strong>Step 2:</strong> Use a priority queue to keep track of the links with the smallest weight that connect the visited nodes to the unvisited nodes.</li>
+                            <li><strong>Step 3:</strong> Remove the link with the smallest weight from the priority queue, add it to the MST, and mark the connected node as visited.</li>
+                            <li><strong>Step 4:</strong> Repeat the process until all nodes are included in the MST or there are no more links to process.</li>
+                            <li>This way, Prim's algorithm ensures that the resulting tree has the minimum possible total link weight while connecting all the nodes in the graph.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsPrimClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                        
+            <!-- end-prim-menu -->
+            <!-- start-fluery-menu -->
+            <div id="chooseNodesFluery" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="chooseNodesFlueryMessageExpl" style="font-size: 35px; color:black"><strong>Fleury's algorithm</strong></p>
+                    <hr>
+                    <p id="flueryMessage" style="font-size: 20px;">Use Fleury's algorithm to find Eulerian cycle or Eulerian path in <strong>undirected graph</strong>.</p><hr>
+                    <div class="toggle-container">
+                        <span class="toggle-label toggle-label-left5"><strong>Eulerian Cycle</strong></span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="fleuryToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label toggle-label-right5"><strong>Eulerian Path</strong></span>
+                    </div>
+                    <hr>
+                    <p id="chooseNodesFlueryMessage" style="font-size: 20px;"><strong>Select the type of Fleury's algorithm:</strong></p>
+                    <div class="modal-actions">
+                        <button id="chooseNodesFlueryConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesFlueryCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesFleuryExplainAlg" class="modal-button yellow-button">What is Fluery's Algorithm?</button>
+                    </div>
+                </div>
+            </div> 
+            <div id="whatIsFleury" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsFleuryMessageExpl" style="font-size: 20px;">
+                        <strong>What is Fleury's Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        Fleury's algorithm for <strong>undirected graph</strong> is used to find Eulerian cycles and paths in a graph. An Eulerian path is a path that visits every link exactly once, while an Eulerian cycle is a cycle that visits every edge exactly once and returns to the starting node.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> Fleury's algorithm finds an Eulerian cycle or path by traversing each link of the graph exactly once without repeating.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It uses a strategy to avoid crossing bridges (links whose removal would disconnect the graph) until it is necessary.</li>
+                            <li><strong>Step 1:</strong> Start from a node with an odd degree (if all node don't have even degrees) if finding a path, or any node if finding a cycle.</li>
+                            <li><strong>Step 2:</strong> Choose a link to traverse next, prioritizing non-bridge links unless there is no alternative.</li>
+                            <li><strong>Step 3:</strong> Remove the chosen link from the graph and move to the next node.</li>
+                            <li><strong>Step 4:</strong> Repeat the process until all links have been traversed.</li>
+                            <li>This way, Fleury's algorithm ensures that the resulting path or cycle visits every link exactly once, forming an Eulerian cycle or path.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsFleuryClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                       
+            <!-- end-fluery-menu -->
+            <!-- start-hierholzer-menu -->
+            <div id="chooseNodesHierholzer" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="chooseNodesHierholzerMessageExpl" style="font-size: 35px; color:black"><strong>Hierholzer's algorithm</strong></p>
+                    <hr>
+                    <p id="hierholzerMessage" style="font-size: 20px;">Use Hierholzer's algorithm to find Eulerian cycle or Eulerian path in <strong>undirected graph</strong>.</p><hr>
+                    <div class="toggle-container">
+                        <span class="toggle-label toggle-label-left3"><strong>Eulerian Path</strong></span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="hierholzerToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label toggle-label-right3"><strong>Eulerian Cycle</strong></span>
+                    </div>
+                    <hr>
+                    <p id="chooseNodesHierholzerMessage" style="font-size: 20px;"><strong>Select the type of Hierholzer's algorithm:</strong></p>
+                    <div class="modal-actions">
+                        <button id="chooseNodesHierholzerConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesHierholzerCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesHierholzerExplainAlg" class="modal-button yellow-button">What is Hierholzer's Algorithm?</button>
+                    </div>
+                </div>
+            </div>
+            <div id="whatIsHierholzer" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsHierholzerMessageExpl" style="font-size: 20px;">
+                        <strong>What is Hierholzer's Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        Hierholzer's algorithm for <strong>undirected graph</strong> is used to find Eulerian cycles and paths in a graph. An Eulerian path is a path that visits every link exactly once, while an Eulerian cycle is a cycle that visits every link exactly once and returns to the starting node.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> Hierholzer's algorithm finds an Eulerian cycle or path by traversing each link of the graph exactly once without repeating.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It starts with an arbitrary node and forms a cycle by following unused links until it returns to the starting node.</li>
+                            <li><strong>Step 1:</strong> Start from any node and follow a path of unused links until returning to the start node, forming a cycle.</li>
+                            <li><strong>Step 2:</strong> If there are unused links left, pick any node in the current cycle with unused links and form another cycle.</li>
+                            <li><strong>Step 3:</strong> Combine this new cycle with the existing cycle by splicing it into the current cycle.</li>
+                            <li><strong>Step 4:</strong> Repeat the process until all links have been used.</li>
+                            <li>This way, Hierholzer's algorithm ensures that the resulting path or cycle visits every link exactly once, forming an Eulerian cycle or path.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsHierholzerClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                                    
+            <!-- end-hierholzer-menu -->
+            <!-- start-Bellman-Ford-menu -->
+            <div id="chooseNodesBellmanFord" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="chooseNodesBellmanFordMessageExpl" style="font-size: 35px; color:black"><strong>Bellman-Ford algorithm</strong></p>
+                    <hr>
+                    <p id="bellmanFordDesc" style="font-size: 20px;">Finding and visualizing the shortest path between 2 nodes in <strong>directed graph</strong> using the Bellman-Ford algorithm algorithm</p><hr>
+                    <div class="toggle-container">
+                        <span class="toggle-label toggle-label-left2"><strong>From Start To End Node</strong></span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="bellmanFordToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label toggle-label-right2"><strong>From Start To All Nodes</strong></span>
+                    </div>
+                    <hr>
+                    <p id="chooseNodesBellmanFordMessage" style="font-size: 20px;"><strong>Choose the start and end node for Bellman-Ford algorithm:</strong></p>
+                    <select id="startNodeDropdownBellmanFord" class="modal-input"></select>
+                    <select id="endNodeDropdownBellmanFord" class="modal-input"></select>
+                    <p id="relationshipWarningBellmanFord" class="warning-message" style="display: none;"></p>
+                    <div class="modal-actions">
+                        <button id="chooseNodesBellmanFordConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesBellmanFordCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesBellmanFordExplainAlg" class="modal-button yellow-button">What is Bellman-Ford Algorithm?</button>
+                    </div>
+                </div>
+            </div>
+            <div id="whatIsBellmanFord" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsBellmanFordMessageExpl" style="font-size: 20px;">
+                        <strong>What is the Bellman-Ford Algorithm?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        The Bellman-Ford algorithm for <strong>directed graph</strong> used to find the shortest path from a starting node to an ending node in a graph, even if the graph has links with negative weights.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>What it does:</strong> The Bellman-Ford algorithm calculates the shortest path from a start node to an end node by iteratively relaxing the links of the graph.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>It initializes the distance to the start node to 0 and all other nodes to infinity.</li>
+                            <li><strong>Step 1:</strong> For each edge in the graph, update the shortest known distance to the target node if a shorter path is found through the current link.</li>
+                            <li><strong>Step 2:</strong> Repeat this process for a total of V-1 times, where V is the number of nodes in the graph.</li>
+                            <li><strong>Step 3:</strong> Check for negative-weight cycles by iterating through all links one more time. If a shorter path is found, it indicates the presence of a negative-weight cycle.</li>
+                            <li>This way, the Bellman-Ford algorithm can handle graphs with negative weights and detect negative-weight cycles.</li>
+                        </ul>
+                    </p>
+                    <div class="modal-actions">
+                        <button id="whatIsBellmanFordClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                                              
+            <!-- end-Bellman-Ford-menu -->
+            <!-- start-tsp-menu -->
+            <div id="chooseNodesTSP" class="modal-overlay" style="display:none;">
+                <div class="modal-content-addLink">
+                    <p id="chooseNodesTSPMessageExpl" style="font-size: 35px; color:black"><strong>Travelling Salesman Problem</strong></p>
+                    <hr>
+                    <p id="TSPDesc" style="font-size: 20px;">Use <strong>Nearest Neighbour algorithm</strong> or <strong>Sorted Edges Algorithm</strong> to find the approximate solution for the <strong>Salesman Problem (TSP)</strong> in <strong>undirected graph</strong></p><hr>
+                    <div class="toggle-container">
+                        <span class="toggle-label toggle-label-left4"><strong>Nearest Neighbour Algorithm</strong></span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="tspToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label toggle-label-right4"><strong>Sorted Edges Algorithm</strong></span>
+                    </div>
+                    <hr>
+                    <p id="chooseNodesTSPMessage" style="font-size: 20px;"><strong></strong></p>
+                    <p id="selectNodesTSP" style="font-size: 20px;">Select the Start Node for the algorithm</p>
+                    <select id="startNodeDropdownTSP" class="modal-input"></select>
+                    <p id="relationshipWarningTSP" class="warning-message" style="display: none;"></p>
+                    <p id="algorithmWarningTSP" class="warning-message" style="display: none;"></p>
+                    <div class="modal-actions">
+                        <button id="chooseNodesTSPConfirm" class="modal-button confirm-button">Confirm</button>
+                        <button id="chooseNodesTSPCancel" class="modal-button cancel-button">Cancel</button>
+                        <button id="chooseNodesTSPAlgorithmsExplainAlg" class="modal-button yellow-button">What is Travelling Salesman Problem?</button>
+                    </div>
+                </div>
+            </div>
+            <div id="whatIsTSPAlgorithms" class="modal-overlay" style="display: none;">
+                <div class="modal-content-addLink">
+                    <p id="whatIsTSPAlgorithmsMessageExpl" style="font-size: 20px;">
+                        <strong>What are Nearest Neighbor and Sorted Edges Algorithms?</strong>
+                    </p>
+                    <p style="font-size: 16px;">
+                        The Nearest Neighbor and Sorted Edges algorithms for <strong>undirected graphs</strong> are heuristics for solving the Traveling Salesman Problem (TSP). Algorithms aim to find the shortest route that visits each city once and returns to the start.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>Traveling Salesman Problem (TSP):</strong> Given a list of cities and distances, find the shortest route that visits each city once and returns to the start.
+                    <hr>
+                    <p style="font-size: 16px;">
+                        <strong>Nearest Neighbor Algorithm:</strong> Visits the nearest unvisited node until all nodes are visited.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>Start at a given node.</li>
+                            <li><strong>Step 1:</strong> Mark the current node as visited.</li>
+                            <li><strong>Step 2:</strong> Move to the nearest unvisited node.</li>
+                            <li><strong>Step 3:</strong> Repeat until all nodes are visited.</li>
+                            <li><strong>Step 4:</strong> Return to the start to complete the cycle.</li>
+                        </ul>
+                    </p>
+                    <hr>
+                    <p style="font-size: 16px;">
+                        <strong>Sorted Edges Algorithm:</strong> Selects edges in increasing order of weight, avoiding cycles until the tour is complete.
+                    </p>
+                    <p style="font-size: 16px;">
+                        <strong>How it works:</strong> 
+                        <ul style="font-size: 16px;">
+                            <li>Sort all edges by weight.</li>
+                            <li><strong>Step 1:</strong> Initialize an empty tour set.</li>
+                            <li><strong>Step 2:</strong> Add edges to the tour if they don't form a cycle, except to complete the tour.</li>
+                            <li><strong>Step 3:</strong> Track connected components to avoid cycles.</li>
+                        </ul>
+                    </p>
+                    <hr>
+                    <div class="modal-actions">
+                        <button id="whatIsTSPAlgorithmsClose" class="modal-button confirm-button">Close</button>
+                    </div>
+                </div>
+            </div>                                               
+            <!-- end-tsp-menu -->
+            <!-- start-continue-algorithm -->
+            <div id="confirmationModal" class="confirmAlgorithm-modal-overlay" style="display:none;">
+                <div class="confirmAlgorithm-modal-content-addLink" style="min-width: 1000px;">
+                    <p style="font-size: 25px;"><strong>Continue with the next path segment?</strong></p>
+                    <div class="confirmAlgorithm-modal-actions">
+                        <button id="confirmYesAlgorithm" class="modal-button confirm-button" style="min-width: 200px; max-height: 100px;">Yes</button>
+                        <button id="confirmNoAlgorithm" class="modal-button cancel-button" style="min-width: 200px; max-height: 100px;">No</button>
+                        <button id="finishToEnd" class="modal-button yellow-button" style="min-width: 200px; max-height: 100px;">Finish to the end</button>
+                        <button id="repeatLastPath" class="modal-button navbar-button" style="min-width: 200px; max-height: 100px;">Repeat the last path</button>
+                    </div>
+                </div>
+            </div>                                       
+            <!-- end-continue-algorithm -->
+            <!-- start-end-algorithm -->
+            <div id="endAlgModel" class="confirmAlgorithm-modal-overlay" style="display:none;">
+                <div class="confirmAlgorithm-modal-content-addLink">
+                    <p id="algMessage" style="font-size: 20px;"><strong></strong></p>
+                    <div class="confirmAlgorithm-modal-actions">
+                        <button class="modal-button cancel-button" id="closeModal">Close</button>
+                    </div>
+                </div>
+            </div>                                       
+            <!-- end-end-algorithm -->
+            <!-- <error> -->
+            <div id="errorModal" class="modal-overlay" style="display:none;">
+                    <div class="modal-content">
+                        <p id="errorMessage" style="font-weight: bold; font-size: 18px;"></p>
+                        <div class="modal-actions">
+                            <button onclick="closeErrorModal()" id="confirmDeleteAll" class="modal-button">Confirm</button>
+                        </div>
+                    </div>
+            </div>       
+            <!-- <error> -->
+        </div>
+        <div class="graph-container">
+            <div id="graph"></div>
+        </div>
+    </div>
+    <!-- start-algorithm-ongoin -->
+    <div id="algOngoing" class="algOngoin-overlay" style="display: none;">
+        <div class="algOngoing-content">
+            <p id="customAlgMessage" class="algOngoing-message"><strong>Executing...</strong></p>
+            <div class="loader"></div> 
+            <button class="algOngoingStopButton" id="algOngoing-stop">Stop</button>
+        </div>
+    </div>                                       
+    <!-- end-algorithm-ongoin -->
+    <!-- <start-algorithm-desc>  -->
+    <div id="algDescModal" class="algDesc-modal-overlay" style="display:none;">
+        <div class="algDesc-modal-content-table algDesc-dynamic-width" style="text-align: center;">
+            <p id="algDescTitle" style="font-size: 50px;"></p>
+            <hr><br>
+            <p id="algDescSequence" style="font-size: 30px;"></p><hr>
+            <p id="algDescDescription" style="font-size: 25px;">
+                <strong>Here is the description of each step of this algorithm:</strong>
+            </p>
+            <hr>
+            <div id="algDescList" class="algDesc-graph-info-modal-data" style="font-size: 16px;"></div>
+            <hr><br>
+            <button id="algDescCloseModal" class="algDesc-modal-button algDesc-cancel-button">Back</button>
+        </div>
+    </div>
+    <!-- <end-algorithm-desc>     -->             
+    <!--start-deleteAll-->
+    <div id="deleteConfirmation" class="modal-overlay" style="display:none;">
+        <div class="modal-content-addLink">
+            <p id="customNodeInputMessage">Are you sure you want to <strong>delete</strong> all nodes?</p>
+            <div class="modal-actions">
+                <button onclick="deleteAllConfirmed()" id="confirmDeleteAll" class="modal-button" >Confirm</button>
+                <button onclick="hideModal()" id="cancelDeleteAll" class="modal-button">Cancel</button>
+            </div>
+        </div>
+    </div>    
+    <!-- end-deleteAll-->
+    <!--start-import-->
+    <div id="uploadWin" class="modal-overlay" style="display:none;">
+        <div class="modal-content-addLink">
+            <p id="uploadWinInfo" style="font-size: 40px;"><strong>Import Cypher File</strong></p>
+            <hr><br>
+            <div class="file-input-container">
+                <input type="file" id="fileInput" accept=".cypher" style="font-size: 20px;">
+                <button id="explainStructButton" class="modal-button navbar-button">Explain Structure</button>
+            </div>
+            <p id="importWarning" class="warning-message" style="display:none; color: red;"></p>
+            <br><hr>
+            <div class="modal-actions">
+                <button id="cfmImport" class="modal-button confirm-button">Confirm</button>
+                <button id="CnclImport" class="modal-button cancel-button">Cancel</button>
+                <button id="exportDB" class="modal-button yellow-button">Export Current Graph</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="importError" class="confirmAlgorithm-modal-overlay" style="display:none;">
+        <div id="importError2" class="confirmAlgorithm-modal-content-addLink">
+            <p id="importErrorMSG" style="font-size: 20px; color: red;"><strong></strong></p>
+            <div class="modal-actions">
+                <button id="closeImportError" class="modal-button cancel-button">Close</button>
+                <button id="explainStructButton2" class="modal-button yellow-button">Explain Structure</button>
+            </div>
+        </div>
+    </div>
+        <!-- <start-explain-structure>  -->
+            <div id="explainStruct" class="confirmAlgorithm-modal-overlay" style="display:none;">
+                <div id="explainStruct2" class="confirmAlgorithm-modal-content-addLink">
+                    <p id="explainStructMSG" style="font-size: 20px;"><strong>To import a valid file, ensure it contains nodes and links in exactly this format. Example:</strong><br>
+                        <br>CREATE (A:Node {name:'A'})
+                        <br>CREATE (B:Node {name:'B'})
+                        <br>CREATE (C:Node {name:'C'})
+                        <br>CREATE (A)-[:CONNECTS {distance:3}]->(B)
+                        <br>CREATE (B)-[:CONNECTS {distance:4}]->(C)
+                        <br>CREATE (A)-[:CONNECTS {distance:5}]->(C)</p>
+                        <br><hr>
+                    <p style="font-size: 20px; color: red;">There should be no duplicate nodes or links!</p>
+                    <p style="font-size: 20px; color: red;">A node cant have a link with itself!</p>
+                    <div class="modal-actions">
+                        <button id="closeExplainStruct" class="modal-button cancel-button">Close</button>
+                    </div>
+                </div>
+            </div>
+        <!-- <end-explain-structure>  -->                 
+    <!--end-import-->
+
+    <!-- start-menus -->
+    <div id="contextMenu">
+        <ul id="conextMenuList" style="list-style: none; margin: 0; padding: 0;">
+            <li class="contextMenuListOption" id="contextMenuOption1">Change Name</li>
+            <li class="contextMenuListOption" id="contextMenuOption2">Link to Node</li>
+            <li class="contextMenuListOption" id="contextMenuOption3">Delete Node</li>
+            <li class="contextMenuListOption" id="contextMenuOption4">Add Node</li>
+        </ul>
+    </div>
+    <div id="linkMenu">
+        <ul id="linkMenuList" style="list-style: none; margin: 0; padding: 0;">
+            <li class="linkMenuListOption" id="linkMenuOption1">Change Weight</li>
+            <li class="linkMenuListOption" id="linkMenuOption2">Delete Link</li>
+            <li class="linkMenuListOption" id="linkMenuOption3">Change Direction</li>
+        </ul>
+    </div>
+    <div id="backgroundMenu">
+        <ul id="backgroundMenuList" style="list-style: none; margin: 0; padding: 0;">
+            <li class="backgroundMenuListOption" id="backgroundMenuOption1">Add Node</li>
+        </ul>
+    </div>
+    <!-- end-menus -->
+    <!-- start-body-edit -->
+    <div id="customNodeInputModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <p id="customNodeInputMessage">Please enter a name for the new node:</p>
+            <input type="text" id="nodeNameInput" class="link-weight-input" placeholder="Node name">
+            <p id="newNodeWarning" class="warning-message"></p>
+            <div class="modal-actions">
+                <button id="nodeNameConfirm" class="modal-button">Confirm</button>
+                <button id="nodeNameCancel" class="modal-button">Cancel</button>
+            </div>
+        </div>
+    </div>    
+    <!-- end-body-edit -->
+    <!-- start-node-edit-->
+    <div id="renameNodeModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <p id="renameNodeMessage">Input new name for node: <span id="nodeNameToRename"></span></p>
+            <input type="text" id="newNodeNameInput" class="node-name-input" placeholder="New node name">
+            <p id="renameNodeWarning" class="warning-message"></p>
+            <div class="modal-actions">
+                <button id="renameNodeConfirm" class="modal-button confirm-button">Confirm</button>
+                <button id="renameNodeCancel" class="modal-button cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div id="createRelationshipModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content-addLink">
+            <p id="selectedNodeMessage"><strong>You have selected node: <span id="selectedNodeName"></span></strong></p>
+            <p id="addRelationshipMessage">Choose the target node and input distance for the new relationship:</p>
+            <p id="relationshipWarning" class="warning-message"></p>
+            <select id="targetNodeDropdown" class="modal-input"></select>
+            <input type="number" id="relationshipDistanceInput" class="modal-input" placeholder="Distance">
+            <div class="modal-actions">
+                <button id="createRelationshipConfirm" class="modal-button confirm-button">Confirm</button>
+                <button id="createRelationshipCancel" class="modal-button cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div id="deleteNodeConfirmModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <p id="deleteNodeMessage">Do you want to delete the node: <span id="nodeNameToDelete"></span>?</p>
+            <div class="modal-actions">
+                <button id="deleteNodeYes" class="modal-button confirm-button">Yes</button>
+                <button id="deleteNodeNo" class="modal-button cancel-button">No</button>
+            </div>
+        </div>
+    </div>
+    <!-- end-node-edit-->
+    <!-- start-links-edit -->
+    <div id="customInputModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <p id="customInputMessage">Enter new link weight for:</p>
+            <input type="number" id="linkWeightInput" class="link-weight-input" placeholder="New weight">
+            <p id="validNumWarning" class="warning-message"></p>
+            <div class="modal-actions">
+                <button id="inputConfirm" class="modal-button">Confirm</button>
+                <button id="inputCancel" class="modal-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div id="customDirectionModal" class="modal-overlay" style="display:none; min-width: 810px">
+        <div class="modal-content" style="min-width: 810px">
+            <p id="customConfirmMessage">Do you want to change direction of this link?</p>
+            <div class="modal-actions">
+                <button id="changeDirYes" class="modal-button">Yes</button>
+                <button id="changeDirNo" class="modal-button">No</button>
+            </div>
+        </div>
+    </div>
+    <div id="customConfirmModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <p id="customConfirmMessage">Do you want to delete this link?</p>
+            <div class="modal-actions">
+                <button id="confirmYes" class="modal-button">Yes</button>
+                <button id="confirmNo" class="modal-button">No</button>
+            </div>
+        </div>
+    </div>
+    <!-- end-links-edit -->
+    <!-- start-graphInfo -->
+    <div id="graphInfoModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content-table">
+            <p id="graphInfoModalMessage" style="font-size: 40px;">Graph Details</p>
+            <hr>
+            <div id="graphInfoModalDataNodes" class="graph-info-modal-data" style="font-size: 26px;"></div>
+            <div id="graphInfoModalDataLinks" class="graph-info-modal-data" style="font-size: 16px;"></div>
+            <div id="graphInfoModalDataNodeDegree" class="graph-info-modal-data" style="font-size: 16px;"></div>
+            <div id="graphInfoModalDataNeighborsList" class="graph-info-modal-data" style="font-size: 16px;"></div>
+            <div id="graphInfoModalDataEulerianGraph" class="graph-info-modal-data" style="font-size: 16px;"></div>
+            <button id="showExplainEulerianGraph" class="modal-button confirm-button">What is Eulerian Graph?</button>
+            <hr>
+            <button id="showIncidenceMatrixButton" class="modal-button confirm-button">Show Incidence Matrix</button>
+            <button id="showAdjacencyMatrixButton" class="modal-button confirm-button">Show Adjacency Matrix</button>
+            <hr>
+            <button id="backModalButton" class="modal-button cancel-button">Back</button>
+        </div>
+    </div> 
+    <div id="explainEulerGraph" class="modal-overlay" style="display:none;">
+        <div class="modal-content-table dynamic-width" style="max-width: 35%;">
+            <p id="graphInfoModalMessage" style="font-size: 50px;">Eulerian Graph</p>
+            <hr>
+            <div id="graphInfoModalExplainEulerGraph" class="graph-info-modal-data" style="font-size: 16px;"></div>
+            <br>
+            <br>
+            <button id="backExplainEulerGraphButton" class="modal-button cancel-button">Back</button>  
+        </div>
+    </div> 
+    <div id="incidenceMatrix" class="modal-overlay" style="display:none;">
+        <div class="modal-content-table dynamic-width">
+            <p id="graphInfoModalMessage" style="font-size: 50px;">Incidence Matrix</p>
+            <p id="graphInfoModalMessageIncidenceExplanation" style="font-size: 25px;">
+                An incidence matrix is a matrix that shows the relationship between nodes and links in a graph. Each row represents a node, and each column represents a link.
+            </p>
+            <hr>
+            <div id="graphInfoModalDataIncidenceMatrix" class="graph-info-modal-data" style="font-size: 16px;"></div>
+            <hr><br>
+            <button id="backIncidenceMatrixModalButton" class="modal-button cancel-button">Back</button>
+        </div>
+    </div>
+    <div id="adjacencyMatrix" class="modal-overlay" style="display:none;">
+        <div class="modal-content-table dynamic-width">
+            <p id="graphInfoModalMessage" style="font-size: 50px;">Adjacency Matrix</p>
+            <p id="graphInfoModalMessageAdjacencyExplanation" style="font-size: 25px;">
+                The elements of the matrix indicate whether pairs of nodes are adjacent or not in the graph.
+            </p>
+            <hr>
+            <div id="graphInfoModalDataAdjacencyMatrix" class="graph-info-modal-data" style="font-size: 16px;"></div>
+            <hr><br>
+            <button id="backAdjacencyMatrixModalButton" class="modal-button cancel-button">Back</button>
+        </div>
+    </div> 
+    <!-- end-graphInfo --> 
+    <script src="index.js"></script>
+    <script src="neo4j.js"></script>
+    <script src="graphInfo.js"></script>
+    <script src="graphData.js"></script>
+    <script src="templates.js"></script>
+    <script src="algorithms.js"></script>
+    <script src="Algorithms/Astar.js"></script>
+    <script src="Algorithms/GBFS.js"></script>
+    <script src="Algorithms/dijkstra.js"></script>
+    <script src="Algorithms/bfs.js"></script>
+    <script src="Algorithms/dfs.js"></script>
+    <script src="Algorithms/kruskal.js"></script>
+    <script src="Algorithms/prim.js"></script>
+    <script src="Algorithms/fluery.js"></script>
+    <script src="Algorithms/hierholzer.js"></script>
+    <script src="Algorithms/bellmanFord.js"></script>
+    <script src="Algorithms/tsp.js"></script>
+</body>
+</html>
