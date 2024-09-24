@@ -67,7 +67,7 @@ It iterates through all edges multiple times to guarantee the shortest path and 
 Breadth-First Search (BFS) explores all nodes layer by layer, starting from a source node and visiting all its neighbors before moving to the next layer.
 BFS is useful for unweighted graphs and ensures that the shortest path in terms of the number of edges is found. It’s commonly used in scenarios like finding the shortest path in social networks or in solving puzzles.
 
-Visulization of the Breadth-First Search algorithm:  
+Breadth-First Search algorithm during visualization:  
 ![bfs](https://github.com/user-attachments/assets/5420583b-d7e7-413d-ab70-c51626abe82d)
 
 **Depth-First Search Algorithm:**  
