@@ -17,3 +17,5 @@ A styling language used to control the visual presentation of web pages, ensurin
 
 **JavaScript:** 
 The programming language that adds interactivity and dynamic behavior to web pages. JavaScript integrates seamlessly with HTML and CSS, enabling real-time content and style updates based on user actions.
+
+# Features:
