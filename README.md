@@ -41,6 +41,10 @@ Visualization of the graph and interactivity with its elements.
 Application UI and example of a graph:
 ![1](https://github.com/user-attachments/assets/ff01f5e7-a223-4caf-a704-f732a49f81e8)
 
+Some of the interactions with graph elements:
+![22](https://github.com/user-attachments/assets/ccf7b215-0d75-4be9-9f96-626d14a10555)
+![33](https://github.com/user-attachments/assets/9c842f2d-180a-4fe7-ad0b-fe5016036304)
+
 # Visualization of the algorithms
 Visualize execution of one of these twelve algorithms:
 
