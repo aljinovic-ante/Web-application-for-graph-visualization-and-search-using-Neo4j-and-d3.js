@@ -52,6 +52,9 @@ Visualize execution of one of these twelve algorithms:
 A* finds the shortest path between two nodes by combining the benefits of Dijkstra's algorithm (which guarantees the shortest path) and Greedy Best-First Search (which uses heuristics to guide the search).
 It uses both the actual distance from the start node to the current node and an estimate (heuristic) of the distance from the current node to the goal, making it efficient for pathfinding in scenarios like game development and robotics.
 
+Visulization of the A* algorithm:  
+![a](https://github.com/user-attachments/assets/a87d1934-cbba-46fb-8fa4-ca2246a62c48)
+
 **Greedy Best-First Search Algorithm:**  
 Greedy Best-First Search (BFS) explores the node that seems closest to the goal (based on a heuristic) without considering the total path length.
 It aims to get to the goal as fast as possible but doesn't guarantee the shortest path. It is used in scenarios where speed is more important than optimality, such as simple AI pathfinding.
