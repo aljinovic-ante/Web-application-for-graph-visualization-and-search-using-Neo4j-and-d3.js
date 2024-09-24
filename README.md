@@ -26,16 +26,18 @@ Display of key information about the current graph, such as:
 - Adjacency list
 - Incidence and adjacency matrices
 - Identification of vertices with the most edges
-- Whether the graph is Eulerian
+- Whether the graph is Eulerian  
+![gr](https://github.com/user-attachments/assets/23e38582-4a7e-4f44-bfde-f4ca25c43f4e)
 
 **Templates**  
-Templates menu with predefined graph structures. Choose from several templates for a quick start, then customize them as needed. This feature is especially useful if you want to avoid creating graphs from scratch. When you select a template, the current graph is replaced by the new structure.
+Templates menu with predefined graph structures. Choose from several templates for a quick start, then customize them as needed. This feature is especially useful if you want to avoid creating graphs from scratch. When you select a template, the current graph is replaced by the new structure.  
+![t](https://github.com/user-attachments/assets/6f91b03c-b088-4682-8e97-d9ca2501e240)
 
 **Import/Export Graph**  
 The Import/Export Graph button allows you to import or export graphs in the Cypher file format.
 
 **Graph Visualization and Interaction**  
-Visualization of the graph and interactivity with its elements.
+Visualization of the graph and interactivity with its elements.  
 Application UI and example of a graph:
 ![1](https://github.com/user-attachments/assets/ff01f5e7-a223-4caf-a704-f732a49f81e8)
 
