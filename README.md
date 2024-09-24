@@ -39,7 +39,7 @@ Visualization of the graph and interactivity with its elements.
 Application UI and example of a graph:
 ![1](https://github.com/user-attachments/assets/ff01f5e7-a223-4caf-a704-f732a49f81e8)
 
-***Visualization of the algorithms***  
+# Visualization of the algorithms
 Visualize execution of one of these twelve algorithms:
 
 **A STAR algorithm:**  
