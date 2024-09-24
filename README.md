@@ -42,7 +42,7 @@ Application UI and example of a graph:
 # Visualization of the algorithms
 Visualize execution of one of these twelve algorithms:
 
-**A STAR algorithm:**  
+**A\* algorithm:**    
 A* finds the shortest path between two nodes by combining the benefits of Dijkstra's algorithm (which guarantees the shortest path) and Greedy Best-First Search (which uses heuristics to guide the search).
 It uses both the actual distance from the start node to the current node and an estimate (heuristic) of the distance from the current node to the goal, making it efficient for pathfinding in scenarios like game development and robotics.
 
