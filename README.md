@@ -28,7 +28,7 @@ Display of key information about the current graph, such as:
 - Identification of vertices with the most edges
 - Whether the graph is Eulerian
 
-**Templates**
+**Templates**\n
 Templates menu with predefined graph structures. Choose from several templates for a quick start, then customize them as needed. This feature is especially useful if you want to avoid creating graphs from scratch. When you select a template, the current graph is replaced by the new structure.
 
 **Import/Export Graph**
