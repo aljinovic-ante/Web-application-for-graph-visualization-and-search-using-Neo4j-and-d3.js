@@ -36,6 +36,9 @@ Templates menu with predefined graph structures. Choose from several templates f
 **Import/Export Graph**  
 The Import/Export Graph button allows you to import or export graphs in the Cypher file format.
 
+**Description of Algorithm Steps**  
+After the algorithm is executed, the user can review a log that records each step taken by the algorithm.
+
 **Graph Visualization and Interaction**  
 Visualization of the graph and interactivity with its elements.  
 Application UI and example of a graph:
